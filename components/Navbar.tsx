@@ -20,7 +20,13 @@ export default function Navbar() {
           const offsetBottom = offsetTop + element.offsetHeight;
 
           if (scrollPos >= offsetTop && scrollPos < offsetBottom) {
-            setActiveSection(section);
+            if (activeSection !== section) {
+              setActiveSection(section);
+              // Update URL hash without jumping
+              if (window.history.replaceState) {
+                window.history.replaceState(null, '', `#${section}`);
+              }
+            }
           }
         }
       }

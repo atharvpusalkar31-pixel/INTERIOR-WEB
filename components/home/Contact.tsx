@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 export default function Contact() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
@@ -14,16 +15,28 @@ export default function Contact() {
   return (
     <section id="contact" className="bg-[var(--bg-white)] py-[120px] px-[var(--gutter)]">
       <div className="max-w-[var(--container)] mx-auto">
-        <div className="text-center mb-16 reveal visible">
-          <span className="text-[var(--accent)] text-[11px] uppercase tracking-[0.18em] font-medium mb-4 block">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.2 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <span className="text-[var(--accent)] text-[11px] uppercase tracking-[0.18em] font-bold mb-4 block">
             Get In Touch
           </span>
           <h2 className="font-display text-[40px] md:text-[56px] text-[var(--text-dark)] leading-none">
             Contact Us
           </h2>
-        </div>
+        </motion.div>
 
-        <div className="flex flex-col lg:flex-row shadow-2xl rounded-sm overflow-hidden border border-[var(--border-light)] reveal visible">
+        <motion.div 
+          initial={{ opacity: 0, y: 50, scale: 0.95 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: false, margin: "-50px", amount: 0.2 }}
+          transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+          className="flex flex-col lg:flex-row shadow-2xl rounded-2xl overflow-hidden border border-[var(--border-light)] bg-white"
+        >
           
           {/* Left Col - Form */}
           <div className="w-full lg:w-[60%] bg-white p-8 md:p-[64px]">
@@ -83,13 +96,23 @@ export default function Contact() {
               <p><a href="mailto:hello@morphis.studio" className="hover:text-[var(--accent)] transition-colors">hello@morphis.studio</a></p>
               <p className="text-[var(--text-muted-dk)] pt-4">Mon–Sat 9:30–18:30</p>
             </div>
-
-            <div className="w-full h-[240px] bg-[var(--bg-mid)] mb-10 flex items-center justify-center text-[var(--text-muted-dk)] text-[13px] uppercase tracking-[0.1em] rounded-sm">
-              Google Maps Embed
-            </div>
           </div>
 
-        </div>
+        </motion.div>
+      </div>
+
+      {/* Google Map Section */}
+      <div className="w-screen relative left-1/2 -translate-x-1/2 mt-[120px] h-[400px] md:h-[500px] bg-[var(--bg-mid)] border-t border-[var(--border-dark)]">
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d120638.06452278455!2d72.7752601!3d19.113645!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7ce40b490f05d%3A0xe1042456f4d25fa!2sJuhu%2C%20Mumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+          width="100%" 
+          height="100%" 
+          style={{ border: 0 }} 
+          allowFullScreen={false} 
+          loading="lazy" 
+          referrerPolicy="no-referrer-when-downgrade"
+          title="Studio Location"
+        />
       </div>
     </section>
   );

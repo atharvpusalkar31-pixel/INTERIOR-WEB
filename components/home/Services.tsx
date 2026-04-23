@@ -1,7 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 
 export default function Services() {
   const [activeService, setActiveService] = useState<any>(null);
+  const [showBackBtn, setShowBackBtn] = useState(false);
+  const detailRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!activeService || !detailRef.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowBackBtn(entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(detailRef.current);
+    return () => observer.disconnect();
+  }, [activeService]);
 
   const services = [
     {
@@ -95,21 +112,21 @@ export default function Services() {
   };
 
   return (
-    <section id="services" className="bg-[var(--bg-light)] py-[120px] min-h-screen border-y border-[var(--border-light)]">
+    <section id="services" className="bg-[var(--bg-light)] py-[120px] min-h-screen border-y border-[var(--border-light)] relative">
       
       {activeService ? (
         /* --- DETAIL VIEW --- */
-        <div className="w-full animate-fade-in">
-          <div className="max-w-[var(--container)] mx-auto px-[var(--gutter)] mb-12">
-            <button 
-              onClick={handleBack}
-              className="bg-white border border-[var(--border-light)] text-[var(--text-dark)] px-6 py-3 text-[13px] uppercase tracking-[0.1em] font-medium hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors shadow-sm flex items-center gap-2"
-            >
-              ← Back to Services
-            </button>
-          </div>
+        <div className="w-full animate-fade-in" ref={detailRef}>
+          <button 
+            onClick={handleBack}
+            className={`fixed top-24 left-6 md:left-[var(--gutter)] z-50 bg-[var(--bg-dark)] text-white px-6 py-3 text-[13px] uppercase tracking-[0.1em] font-medium hover:bg-[var(--accent)] transition-all duration-500 shadow-xl flex items-center gap-2 ${
+              showBackBtn ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-4 pointer-events-none'
+            }`}
+          >
+            ← Back to Services
+          </button>
 
-          <div className="max-w-[var(--container)] mx-auto px-[var(--gutter)]">
+          <div className="max-w-[var(--container)] mx-auto px-[var(--gutter)] py-12">
             <div className="bg-white rounded-sm shadow-2xl overflow-hidden flex flex-col lg:flex-row">
               {/* Image Side */}
               <div className="w-full lg:w-1/2 h-[400px] lg:h-auto relative">
@@ -168,25 +185,41 @@ export default function Services() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((svc, idx) => (
-              <div 
-                key={idx} 
-                onClick={() => handleServiceClick(svc)}
-                className="bg-white p-10 rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#EAE8E3] hover:border-[var(--accent)] transition-all duration-300 group cursor-pointer reveal visible" 
-                data-delay={idx + 1}
-              >
-                <div className="w-14 h-14 bg-[#F5F5F0] rounded-full flex items-center justify-center mb-8 group-hover:bg-[var(--accent)] transition-colors duration-300">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#333] group-hover:text-white transition-colors duration-300">
-                    <path d={svc.icon} />
-                  </svg>
-                </div>
-                <h3 className="font-display text-[26px] text-[var(--text-dark)] mb-4 group-hover:text-[var(--accent)] transition-colors">{svc.name}</h3>
-                <p className="font-body text-[15px] text-[var(--text-muted)] leading-[1.6] mb-8">{svc.desc}</p>
-                <div className="inline-flex text-[13px] text-[var(--accent)] uppercase tracking-[0.18em] font-medium relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[1px] after:bg-[var(--accent)] after:opacity-0 hover:after:opacity-100 after:transition-opacity">
-                  Learn More →
-                </div>
-              </div>
-            ))}
+            {services.map((svc, idx) => {
+              const bgGradients = [
+                'from-[#FDFBF7] to-[#F3EBE1]',
+                'from-[#F4F7F6] to-[#E3ECE9]',
+                'from-[#FAF6F3] to-[#F1E5DB]',
+                'from-[#F9F7FA] to-[#EDE7F0]',
+                'from-[#FDFBF7] to-[#F1F3E9]',
+                'from-[#F5F2EE] to-[#E6E0D8]'
+              ];
+              const gradient = bgGradients[idx % bgGradients.length];
+
+              return (
+                <motion.div 
+                  key={idx} 
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false, margin: "-50px", amount: 0.2 }}
+                  transition={{ duration: 0.8, type: "spring", bounce: 0.4, delay: idx * 0.1 }}
+                  onClick={() => handleServiceClick(svc)}
+                  className={`bg-gradient-to-br ${gradient} p-10 rounded-2xl shadow-lg border border-white/60 hover:shadow-2xl hover:-translate-y-2 hover:border-[var(--accent)] transition-all duration-300 group cursor-pointer relative overflow-hidden`} 
+                >
+                  <div className="absolute inset-0 bg-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                  <div className="w-14 h-14 bg-white/80 rounded-full flex items-center justify-center mb-8 group-hover:bg-[var(--accent)] transition-colors duration-300 shadow-sm relative z-10">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--accent)] group-hover:text-white transition-colors duration-300">
+                      <path d={svc.icon} />
+                    </svg>
+                  </div>
+                  <h3 className="font-display text-[26px] text-[var(--text-dark)] mb-4 group-hover:text-[var(--accent)] transition-colors relative z-10">{svc.name}</h3>
+                  <p className="font-body text-[15px] text-[#555] leading-[1.6] mb-8 relative z-10">{svc.desc}</p>
+                  <div className="inline-flex text-[13px] text-[var(--accent)] uppercase tracking-[0.18em] font-bold relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[2px] after:bg-[var(--accent)] after:opacity-0 hover:after:opacity-100 after:transition-opacity z-10">
+                    Explore Service →
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       )}

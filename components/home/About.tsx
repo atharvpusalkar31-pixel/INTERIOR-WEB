@@ -2,14 +2,17 @@ import { useParallax } from '@/hooks/useParallax';
 import { useRef } from 'react';
 import { useCountUp } from '@/hooks/useCountUp';
 
+import { motion } from 'framer-motion';
+
 export default function About() {
   const parallax = useParallax(0.1);
   const sectionRef = useRef<HTMLElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
   
-  const experience = useCountUp(20, 1800, sectionRef);
-  const projects = useCountUp(250, 1800, sectionRef);
-  const clients = useCountUp(300, 1800, sectionRef);
-  const awards = useCountUp(15, 1800, sectionRef);
+  const experience = useCountUp(20, 2500, statsRef);
+  const projects = useCountUp(250, 2500, statsRef);
+  const clients = useCountUp(300, 2500, statsRef);
+  const awards = useCountUp(15, 2500, statsRef);
 
   return (
     <section id="about" ref={sectionRef} className="bg-[#FAF9F6] py-[120px] px-[var(--gutter)] overflow-hidden">
@@ -54,23 +57,26 @@ export default function About() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          <div className="bg-white p-8 rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#EAE8E3] text-center reveal visible" data-delay="1">
-            <div className="font-display text-[48px] text-[var(--accent)] mb-2">{experience}+</div>
-            <div className="font-body text-[13px] uppercase tracking-[0.1em] text-[#666]">Years of Experience</div>
-          </div>
-          <div className="bg-white p-8 rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#EAE8E3] text-center reveal visible" data-delay="2">
-            <div className="font-display text-[48px] text-[var(--accent)] mb-2">{projects}+</div>
-            <div className="font-body text-[13px] uppercase tracking-[0.1em] text-[#666]">Projects Completed</div>
-          </div>
-          <div className="bg-white p-8 rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#EAE8E3] text-center reveal visible" data-delay="3">
-            <div className="font-display text-[48px] text-[var(--accent)] mb-2">{clients}+</div>
-            <div className="font-body text-[13px] uppercase tracking-[0.1em] text-[#666]">Happy Clients</div>
-          </div>
-          <div className="bg-white p-8 rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#EAE8E3] text-center reveal visible" data-delay="4">
-            <div className="font-display text-[48px] text-[var(--accent)] mb-2">{awards}</div>
-            <div className="font-body text-[13px] uppercase tracking-[0.1em] text-[#666]">Design Awards</div>
-          </div>
+        <div ref={statsRef} className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {[
+            { value: experience, label: 'Years of Experience', delay: 0.1, color: 'from-[#FDFBF7] to-[#F3EBE1]' },
+            { value: projects, label: 'Projects Completed', delay: 0.2, color: 'from-[#F4F7F6] to-[#E3ECE9]' },
+            { value: clients, label: 'Happy Clients', delay: 0.3, color: 'from-[#FAF6F3] to-[#F1E5DB]' },
+            { value: awards, label: 'Design Awards', delay: 0.4, color: 'from-[#F9F7FA] to-[#EDE7F0]' }
+          ].map((stat, idx) => (
+            <motion.div 
+              key={idx}
+              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: false, margin: "-50px", amount: 0.2 }}
+              transition={{ duration: 0.7, type: "spring", bounce: 0.4, delay: stat.delay }}
+              className={`bg-gradient-to-br ${stat.color} p-8 rounded-2xl border border-white/50 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 text-center relative overflow-hidden group`}
+            >
+              <div className="absolute inset-0 bg-white/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              <div className="font-display text-[48px] text-[var(--accent)] mb-2 relative z-10">{stat.value}{idx !== 3 ? '+' : ''}</div>
+              <div className="font-body text-[13px] uppercase tracking-[0.1em] text-[#555] font-semibold relative z-10">{stat.label}</div>
+            </motion.div>
+          ))}
         </div>
 
       </div>

@@ -1,136 +1,79 @@
-import { useState, useEffect, useCallback } from 'react';
-
-const testimonials = [
-  {
-    quote: "The team transformed our penthouse beyond anything we imagined. Every material, every detail was deliberate. Guests ask who designed the space within minutes of arriving.",
-    name: "Rajesh Mehta",
-    role: "MD, Mehta Realty Group",
-    avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150"
-  },
-  {
-    quote: "What sets this firm apart is their discipline. Timelines were met, budget was respected, and the outcome was extraordinary. Rare combination in this industry.",
-    name: "Priya Sheth",
-    role: "Director, Sheth Developers",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150"
-  },
-  {
-    quote: "They designed our hotel lobby and it became the most photographed space in the property. Guests check in and immediately reach for their cameras. That is the power of good design.",
-    name: "Anjali Kapoor",
-    role: "CEO, AK Hospitality Ventures",
-    avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150"
-  }
-];
+import { motion } from 'framer-motion';
 
 export default function Testimonials() {
-  const [current, setCurrent] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  const nextSlide = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % testimonials.length);
-  }, []);
-
-  const prevSlide = () => {
-    setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
-
-  useEffect(() => {
-    if (isPaused) return;
-    const timer = setInterval(nextSlide, 5000);
-    return () => clearInterval(timer);
-  }, [isPaused, nextSlide]);
+  const reviews = [
+    {
+      name: "Aarti Desai",
+      role: "Homeowner, Worli",
+      text: "Morphis Studio completely transformed our sea-facing apartment. Their attention to detail and ability to balance luxurious materials with everyday functionality is truly unparalleled.",
+      rating: 5
+    },
+    {
+      name: "Rohan Kapoor",
+      role: "CEO, TechFlow",
+      text: "Our new corporate office is a masterpiece. The Morphis team understood our brand instantly and created a workspace that our employees genuinely love coming to.",
+      rating: 5
+    },
+    {
+      name: "Priya Mehta",
+      role: "Founder, Luxe Hospitality",
+      text: "From concept to execution, the process was incredibly smooth. They elevated our boutique hotel's lobby into a destination. Highly recommend their turnkey solutions.",
+      rating: 5
+    }
+  ];
 
   return (
-    <section className="bg-[var(--bg-light)] py-[var(--section-py-mob)] md:py-[var(--section-py)] overflow-hidden">
-      <div className="max-w-[var(--container)] mx-auto px-6">
-        
-        {/* Header */}
+    <section id="testimonials" className="bg-[#FAF9F6] py-[120px] px-[var(--gutter)] border-t border-[var(--border-light)]">
+      <div className="max-w-[var(--container)] mx-auto">
         <div className="text-center mb-16 reveal visible">
           <span className="text-[var(--accent)] text-[11px] uppercase tracking-[0.18em] font-medium mb-4 block">
-            Client Voices
+            Client Experiences
           </span>
-          <h2 className="font-display text-[40px] md:text-[48px] text-[var(--text-dark)]">
-            What Our Clients Say
+          <h2 className="font-display text-[40px] md:text-[56px] text-[var(--text-dark)] leading-none">
+            Customer Reviews
           </h2>
         </div>
 
-        {/* Carousel Container */}
-        <div 
-          className="relative max-w-3xl mx-auto"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          {/* Cards */}
-          <div className="relative h-[400px] md:h-[320px] w-full">
-            {testimonials.map((t, idx) => (
-              <div 
-                key={idx}
-                className={`absolute inset-0 w-full transition-all duration-400 ease-out flex flex-col justify-center bg-white px-8 py-10 md:px-[56px] md:py-[48px] shadow-[0_2px_40px_rgba(0,0,0,0.06)]
-                  ${idx === current ? 'opacity-100 translate-x-0 z-10' : 'opacity-0 translate-x-8 pointer-events-none z-0'}`}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {reviews.map((review, idx) => {
+            const bgGradients = [
+              'from-[#FDFBF7] to-[#F1F3E9]',
+              'from-[#FAF6F3] to-[#F1E5DB]',
+              'from-[#F4F7F6] to-[#E3ECE9]'
+            ];
+            const gradient = bgGradients[idx % bgGradients.length];
+
+            return (
+              <motion.div 
+                key={idx} 
+                initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: false, margin: "-50px", amount: 0.2 }}
+                transition={{ duration: 0.7, type: "spring", bounce: 0.4, delay: idx * 0.2 }}
+                className={`bg-gradient-to-br ${gradient} p-10 rounded-2xl shadow-lg border border-white/60 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 relative overflow-hidden group`}
               >
-                {/* Stars */}
-                <div className="text-[var(--accent)] text-[16px] tracking-[4px] mb-6">
-                  ★★★★★
+                <div className="absolute inset-0 bg-white/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                
+                <div className="flex gap-1 mb-6 relative z-10">
+                  {[...Array(review.rating)].map((_, i) => (
+                    <svg key={i} width="18" height="18" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-sm">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                  ))}
                 </div>
                 
-                {/* Quote */}
-                <p className="font-display italic text-[18px] text-[var(--text-dark)] leading-[1.75] mb-8">
-                  "{t.quote}"
+                <p className="font-body text-[16px] text-[#444] leading-[1.8] mb-8 italic relative z-10">
+                  "{review.text}"
                 </p>
                 
-                {/* Avatar/Meta */}
-                <div className="flex items-center gap-4 mt-auto">
-                  <img 
-                    src={t.avatar} 
-                    alt={t.name}
-                    className="w-14 h-14 rounded-full object-cover grayscale"
-                  />
-                  <div>
-                    <h4 className="font-body text-[16px] font-medium text-[var(--text-dark)]">
-                      {t.name}
-                    </h4>
-                    <span className="text-[12px] uppercase tracking-[0.1em] text-[var(--accent)]">
-                      {t.role}
-                    </span>
-                  </div>
+                <div className="relative z-10 border-t border-[var(--border-light)] pt-6 mt-auto">
+                  <h4 className="font-display text-[22px] text-[var(--text-dark)]">{review.name}</h4>
+                  <p className="font-body text-[13px] text-[var(--accent)] font-semibold mt-1 uppercase tracking-[0.05em]">{review.role}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Navigation Controls */}
-          <div className="flex items-center justify-between mt-8">
-            {/* Arrows */}
-            <div className="flex gap-4">
-              <button 
-                onClick={prevSlide}
-                className="w-10 h-10 border border-[var(--border-light)] flex items-center justify-center rounded-full hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors text-[var(--text-muted)]"
-                aria-label="Previous testimonial"
-              >
-                ←
-              </button>
-              <button 
-                onClick={nextSlide}
-                className="w-10 h-10 border border-[var(--border-light)] flex items-center justify-center rounded-full hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors text-[var(--text-muted)]"
-                aria-label="Next testimonial"
-              >
-                →
-              </button>
-            </div>
-            
-            {/* Dots */}
-            <div className="flex gap-2">
-              {testimonials.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrent(idx)}
-                  aria-label={`Go to slide ${idx + 1}`}
-                  className={`h-[2px] transition-all duration-300 ${idx === current ? 'w-8 bg-[var(--accent)]' : 'w-4 bg-[var(--border-light)]'}`}
-                />
-              ))}
-            </div>
-          </div>
+              </motion.div>
+            );
+          })}
         </div>
-
       </div>
     </section>
   );

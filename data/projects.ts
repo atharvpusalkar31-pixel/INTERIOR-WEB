@@ -103,7 +103,7 @@ export const projects: Project[] = [
   {
     slug: "sea-view-villa-alibaug",
     name: "Sea View Villa",
-    type: "Residential",
+    type: "Architecture",
     location: "Alibaug, Maharashtra",
     year: 2021,
     area: "7,800 sq.ft",
@@ -147,6 +147,22 @@ export const projects: Project[] = [
     outcome: "Shortlisted for the COA Heritage Preservation Award, 2021.",
     gallery: [
       "https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=1400&q=80",
+    ]
+  },
+  {
+    slug: "hillside-retreat",
+    name: "Hillside Retreat",
+    type: "Landscape",
+    location: "Lonavala, Maharashtra",
+    year: 2024,
+    area: "14,000 sq.ft",
+    clientType: "Private Estate",
+    coverImage: "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=1200&q=80",
+    brief: "A luxury estate requiring extensive landscaping to blend seamlessly with the natural topography.",
+    approach: "We preserved existing trees and integrated stepped terraces with native flora and minimal hardscaping.",
+    outcome: "A serene getaway that feels completely at one with nature.",
+    gallery: [
+      "https://images.unsplash.com/photo-1558904541-efa843a96f0f?w=1400&q=80",
     ]
   }
 ]

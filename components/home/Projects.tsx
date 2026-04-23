@@ -1,14 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { projects, Project } from '@/data/projects';
 
 export default function Projects() {
   const [filter, setFilter] = useState('All');
   const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [showBackBtn, setShowBackBtn] = useState(false);
+  const detailRef = useRef<HTMLDivElement>(null);
+
   const tabs = ['All', 'Residential', 'Commercial', 'Hospitality', 'Architecture', 'Landscape'];
+
+  useEffect(() => {
+    if (!activeProject || !detailRef.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Only show the back button when the user is scrolled PAST the very top of the section
+        // Or we can just show it if the section is intersecting
+        setShowBackBtn(entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(detailRef.current);
+    return () => observer.disconnect();
+  }, [activeProject]);
 
   const handleProjectClick = (project: Project) => {
     setActiveProject(project);
-    // Smooth scroll to top of projects section
     document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -17,15 +36,20 @@ export default function Projects() {
     document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Filter the projects array directly so layout updates cleanly
+  const displayedProjects = projects.filter(p => filter === 'All' || p.type === filter);
+
   return (
-    <section id="projects" className="bg-[var(--bg-white)] py-[120px] min-h-screen">
+    <section id="projects" className="bg-[var(--bg-white)] py-[120px] min-h-screen relative">
       
       {/* --- DETAIL VIEW --- */}
       {activeProject ? (
-        <div className="w-full animate-fade-in">
+        <div className="w-full animate-fade-in" ref={detailRef}>
           <button 
             onClick={handleBack}
-            className="fixed top-24 left-6 md:left-[var(--gutter)] z-50 bg-[var(--bg-dark)] text-white px-6 py-3 text-[13px] uppercase tracking-[0.1em] font-medium hover:bg-[var(--accent)] transition-colors shadow-xl flex items-center gap-2"
+            className={`fixed top-24 left-6 md:left-[var(--gutter)] z-50 bg-[var(--bg-dark)] text-white px-6 py-3 text-[13px] uppercase tracking-[0.1em] font-medium hover:bg-[var(--accent)] transition-all duration-500 shadow-xl flex items-center gap-2 ${
+              showBackBtn ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-4 pointer-events-none'
+            }`}
           >
             ← Back to Projects
           </button>
@@ -113,46 +137,44 @@ export default function Projects() {
           {/* Grid */}
           <div className="max-w-[var(--container)] mx-auto px-[var(--gutter)]">
             <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-              {projects.map((project, idx) => {
-                const isMatch = filter === 'All' || project.type === filter;
-                return (
-                  <div 
-                    key={project.slug}
-                    onClick={() => isMatch && handleProjectClick(project)}
-                    className={`relative overflow-hidden rounded-sm break-inside-avoid group cursor-pointer transition-all duration-500 reveal visible ${
-                      isMatch ? 'opacity-100 pointer-events-auto scale-100' : 'opacity-10 pointer-events-none scale-95'
-                    }`}
-                    style={{ transitionDelay: `${(idx % 3) * 100}ms` }}
-                  >
-                    <div className="block overflow-hidden relative">
-                      <img 
-                        src={project.coverImage} 
-                        alt={project.name}
-                        className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                        loading="lazy"
-                      />
-                      
-                      {/* Hover Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[rgba(14,14,12,0.9)] via-[rgba(14,14,12,0.2)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex flex-col justify-end p-8">
-                        <div className="transform translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out delay-100">
-                          <span className="block text-[11px] text-[var(--accent)] uppercase tracking-[0.18em] mb-2 font-medium">
-                            {project.type}
+              {displayedProjects.map((project, idx) => (
+                <motion.div 
+                  key={project.slug}
+                  initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: false, margin: "-50px", amount: 0.2 }}
+                  transition={{ duration: 0.7, type: "spring", bounce: 0.4, delay: (idx % 3) * 0.1 }}
+                  onClick={() => handleProjectClick(project)}
+                  className="relative overflow-hidden rounded-2xl break-inside-avoid group cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500"
+                >
+                  <div className="block overflow-hidden relative">
+                    <img 
+                      src={project.coverImage} 
+                      alt={project.name}
+                      className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                      loading="lazy"
+                    />
+                    
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[rgba(14,14,12,0.95)] via-[rgba(14,14,12,0.4)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex flex-col justify-end p-8">
+                      <div className="transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out delay-100">
+                        <span className="block text-[11px] text-[var(--accent)] uppercase tracking-[0.18em] mb-2 font-bold">
+                          {project.type}
+                        </span>
+                        <h3 className="font-display text-[26px] text-white mb-2">
+                          {project.name}
+                        </h3>
+                        <div className="flex items-center justify-between">
+                          <span className="font-body text-[13px] text-[#ddd]">
+                            {project.location}
                           </span>
-                          <h3 className="font-display text-[26px] text-white mb-2">
-                            {project.name}
-                          </h3>
-                          <div className="flex items-center justify-between">
-                            <span className="font-body text-[13px] text-[var(--text-muted-dk)]">
-                              {project.location}
-                            </span>
-                            <span className="text-[var(--accent)] text-[20px] font-light">→</span>
-                          </div>
+                          <span className="text-[var(--accent)] text-[20px] font-light group-hover:translate-x-2 transition-transform duration-300">→</span>
                         </div>
                       </div>
                     </div>
                   </div>
-                );
-              })}
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>

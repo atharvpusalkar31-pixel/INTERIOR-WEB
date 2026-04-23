@@ -81,7 +81,7 @@ export default function Footer() {
         {/* Bottom Strip */}
         <div className="flex flex-col md:flex-row justify-between items-center text-[12px] text-[var(--text-muted-dk)] gap-4">
           <p>© 2025 Morphis Studio. All rights reserved.</p>
-          <p>Crafted by Morphis Studio</p>
+          <p>Made by <span className="text-red-500 text-sm">❤️</span> with Ajay and dedicated to TD ✨</p>
         </div>
       </div>
     </footer>
