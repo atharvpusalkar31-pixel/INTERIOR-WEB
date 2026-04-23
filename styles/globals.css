@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--bg-dark);
+  --color-secondary: var(--bg-mid);
+  --color-secondary-foreground: var(--text-primary);
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+  --color-muted: var(--text-muted);
+  --color-muted-foreground: var(--text-muted-dk);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--bg-dark);
+  --color-border: var(--border-dark);
+  --color-input: var(--border-light);
+  --color-ring: var(--accent);
+  --color-background: var(--bg-dark);
+  --color-foreground: var(--text-primary);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+:root {
+  --bg-dark:        #0E0E0C;
+  --bg-mid:         #1A1A18;
+  --bg-light:       #F5F2EE;
+  --bg-white:       #FDFCFA;
+  --accent:         #C9A96E;
+  --accent-hover:   #B8934A;
+  --text-primary:   #FFFFFF;
+  --text-dark:      #1A1A18;
+  --text-muted:     #6B6B64;
+  --text-muted-dk:  #9A9A90;
+  --border-dark:    #2E2E2B;
+  --border-light:   #E0DDD8;
+  --font-display:   'Cormorant Garamond', Georgia, serif;
+  --font-body:      'DM Sans', sans-serif;
+  --section-py:     120px;
+  --section-py-mob: 64px;
+  --container:      1280px;
+  --gutter:         24px;
+  --ease:           cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out:       cubic-bezier(0.16, 1, 0.3, 1);
+  --duration:       0.5s;
+  --duration-fast:  0.25s;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+/* Base reveal classes — toggled by IntersectionObserver */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
+.reveal.visible   { opacity: 1; transform: translateY(0); }
+.reveal-left      { opacity: 0; transform: translateX(-40px);
+                    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+.reveal-left.visible  { opacity: 1; transform: translateX(0); }
+.reveal-right     { opacity: 0; transform: translateX(40px);
+                    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+/* Stagger: add data-delay="1" through "6" on children */
+[data-delay="1"] { transition-delay: 0.1s; }
+[data-delay="2"] { transition-delay: 0.2s; }
+[data-delay="3"] { transition-delay: 0.3s; }
+[data-delay="4"] { transition-delay: 0.4s; }
+[data-delay="5"] { transition-delay: 0.5s; }
+[data-delay="6"] { transition-delay: 0.6s; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
